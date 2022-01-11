@@ -84,7 +84,7 @@ int main() {
                 "execution space is not available");
 
   /// type 2
-  using allocator_type = ZSPmrAllocator<true>; // virtual or not both fine
+  using allocator_type = ZSPmrAllocator<false>; // virtual or not both fine
   Vector<vec2, allocator_type> x2{n_type2, memsrc, 0};
   Vector<vec2, allocator_type> v2{n_type2, memsrc, 0};
   Vector<mat2, allocator_type> C2{n_type2, memsrc, 0};
@@ -311,7 +311,7 @@ int main() {
             if (auto l = dot(dist, dist); l < circleRadius * circleRadius) {
               dist = dist / sqrt(l);
               auto val =
-                  gcem::min((T)0., dot(grid.template pack<dim>("v", gi), dist));
+                  zs::min((T)0., dot(grid.template pack<dim>("v", gi), dist));
               for (int d = 0; d != dim; ++d) {
                 grid("v", d, gi) -= dist[d] * val;
                 grid("v", d, gi) *= (T)0.9; // friction
@@ -403,7 +403,7 @@ int main() {
 
                if (r22 < 0) {
                  r12 = (T)0.;
-                 r22 = gcem::max(r22, -(T)1.);
+                 r22 = zs::max(r22, -(T)1.);
                } else if (r22 > (T)1.) {
                  r12 = (T)0.;
                  r22 = (T)1.;
