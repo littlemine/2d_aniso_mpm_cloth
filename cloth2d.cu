@@ -231,7 +231,7 @@ int main() {
 
                vec2 dphi_dF_c1{dphi_dF(0, 1), dphi_dF(1, 1)};
 
-               vec2 Dp_inv_c0{D3inv[pi](0, 0), D3inv[pi](1, 0)};
+               vec2 Dp_inv_c0{D3inv[pi](0, 0), D3inv[pi](0, 1)};
 
                for (auto [i, j] : ndrange<dim>(3)) {
                  auto offset = vec2i{i, j};
@@ -242,9 +242,9 @@ int main() {
                  auto f_2 = dphi_dF * Dp_inv_c0;
                  for (int d = 0; d != dim; ++d) {
                    atomic_add(execTag, &grid("f", d, gi_l),
-                              volume2 * weight_l * f_2[d]);
+                              volume3 * weight_l * f_2[d]);
                    atomic_add(execTag, &grid("f", d, gi_r),
-                              -volume2 * weight_r * f_2[d]);
+                              -volume3 * weight_r * f_2[d]);
                  }
                  auto gi = c2lo(base[0] + offset[0], base[1] + offset[1]);
                  vec2 dw_dx{dw_dx_d[i][0] * w[j][1], w[i][0] * dw_dx_d[j][1]};
@@ -254,6 +254,7 @@ int main() {
                    atomic_add(execTag, &grid("f", d, gi), v[d]);
                }
              });
+#if 1
     // force: bending
     cudaExec(range((ln_type2 - 2) * N_Line),
              [x2 = proxy<space>(x2),
@@ -292,6 +293,7 @@ int main() {
                  }
                }
              });
+#endif
 
     // grid update
     cudaExec(
